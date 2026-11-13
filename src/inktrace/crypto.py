@@ -6,6 +6,7 @@ tag   = HMAC-SHA256(K_doc, "inktrace-v1" || version || doc_id || recipient_id)[:
 
 import hashlib
 import hmac
+import os
 import secrets
 import struct
 
@@ -37,8 +38,6 @@ def key_to_hex(key: bytes) -> str:
 
 def load_key(path: str | None = None) -> bytes:
     """Load a hex key from a file, or from INKTRACE_KEY if no path is given."""
-    import os
-
     if path:
         with open(path) as f:
             raw = f.read().strip()
@@ -57,8 +56,6 @@ def load_key(path: str | None = None) -> bytes:
 
 def save_key(key: bytes, path: str) -> None:
     """Write a hex key readable only by the owner."""
-    import os
-
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
     with os.fdopen(fd, "w") as f:
         f.write(key_to_hex(key) + "\n")
