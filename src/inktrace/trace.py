@@ -70,6 +70,7 @@ def trace(text: str, key: bytes, lookup: Lookup) -> TraceResult:
 
 def explain(r: TraceResult) -> str:
     """Human readable report for the CLI and web page."""
+
     def who(h: Hit) -> str:
         name = h.name or "unknown recipient"
         return f"{name} (doc {h.doc_id}, recipient {h.recipient_id}, {h.frames} valid)"
