@@ -1,7 +1,5 @@
 # InkTrace Architecture
 
-> Draft. Sections get filled in as each part is built.
-
 ## Overview
 
 InkTrace hides a signed, per-recipient code inside plain text using zero-width Unicode characters,
@@ -9,13 +7,38 @@ and later reads it back from a leaked copy to find out whose copy it was.
 
 ## Components
 
-- `zw`: converts bits to and from zero-width characters
-- `crypto`: key generation and loading, HMAC-SHA256 tags
-- `payload`: packs `version | doc_id | recipient_id | tag` and frames it
-- `embed`: places frames in the text without changing what is visible
-- `trace`: finds frames in a leaked text, checks tags, decides the outcome
-- `store`: SQLite database of documents, recipients and issued copies
-- `cli` / `web`: command-line tool and demo web page
+```mermaid
+flowchart LR
+  user([Sender]) --> cli[cli]
+  user --> web[web]
+  cli --> embed
+  web --> embed
+  cli --> trace
+  web --> trace
+  embed --> payload
+  trace --> payload
+  embed --> crypto
+  trace --> crypto
+  payload --> zw
+  cli --> store[(store / SQLite)]
+  web --> store
+  trace -. lookup .-> store
+```
+
+| Module | File | Job |
+|---|---|---|
+| `zw` | `src/inktrace/zw.py` | bits to and from zero-width chars, strip, reveal |
+| `crypto` | `src/inktrace/crypto.py` | key generate/load/save, per-doc key, HMAC tags |
+| `payload` | `src/inktrace/payload.py` | pack/unpack 116 bits, frame, find frames in text |
+| `trace` | `src/inktrace/trace.py` | verify every frame, decide the outcome, explain it |
+| `embed` | `src/inktrace/embed.py` | pick gaps and insert frames |
+| `store` | `src/inktrace/store.py` | SQLite: documents, recipients, issued copies, trace log |
+| `cli` | `src/inktrace/cli.py` | `inktrace` command |
+| `web` | `src/inktrace/web/` | Flask demo page (localhost only) |
+
+The core (`zw`, `crypto`, `payload`, `trace`, `embed`) uses only the Python standard library.
+`trace` does not import `store`. It takes a `lookup(doc_id, recipient_id)` function, so it can be
+tested without a database.
 
 ## Design
 
