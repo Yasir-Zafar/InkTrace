@@ -41,3 +41,17 @@ def zw_to_bits(chars: str) -> str:
     if not set(chars) <= {ZERO, ONE}:
         raise ValueError("not zero-width data characters")
     return chars.replace(ZERO, "0").replace(ONE, "1")
+
+
+def strip_zero_width(text: str) -> str:
+    """Remove every zero-width character."""
+    return ZW_RE.sub("", text)
+
+
+def has_zero_width(text: str) -> bool:
+    return ZW_RE.search(text) is not None
+
+
+def reveal(text: str) -> str:
+    """Show hidden characters as <NAME> so a person can see them."""
+    return ZW_RE.sub(lambda m: f"<{NAMES[m.group()]}>", text)
