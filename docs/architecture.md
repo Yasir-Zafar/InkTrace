@@ -106,6 +106,24 @@ never used to blame anyone.
 
 ### Embedding a document
 
+```mermaid
+sequenceDiagram
+  participant S as Sender
+  participant C as cli / web
+  participant DB as store
+  participant E as embed
+  S->>C: doc text + recipient list
+  C->>DB: create document, add recipients
+  loop each recipient
+    C->>E: embed(text, doc_id, recipient_id, K)
+    E->>E: tag = HMAC(K_doc, ...)[:8]
+    E->>E: frame = WJ + bits + WJ, insert at chosen gaps
+    E-->>C: watermarked copy
+    C->>DB: record issued copy
+  end
+  C-->>S: one copy per recipient
+```
+
 ### Tracing a leaked copy
 
 ## Database schema
