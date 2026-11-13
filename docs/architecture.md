@@ -146,4 +146,38 @@ sequenceDiagram
 
 ## Database schema
 
+```mermaid
+erDiagram
+  documents ||--o{ recipients : has
+  documents ||--o{ issued_copies : has
+  recipients ||--o{ issued_copies : gets
+  documents {
+    int id PK
+    text title
+    text sha256_of_plain
+    text created_at
+  }
+  recipients {
+    int doc_id FK
+    int id
+    text name
+    text contact
+  }
+  issued_copies {
+    int doc_id FK
+    int recipient_id FK
+    text issued_at
+    text sha256_of_copy
+  }
+  trace_log {
+    int id PK
+    text ts
+    text outcome
+    text details_json
+  }
+```
+
+`recipient_id` is unique per document (16 bits, so up to 65,536 recipients per document).
+The key is never stored in the database.
+
 ## Design decisions and alternatives
