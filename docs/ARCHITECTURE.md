@@ -57,6 +57,13 @@ offline because they do not have `K`, so this is enough for our use.
 
 ### Placement in the text
 
+- A gap is a position right after an ASCII space where the characters on both sides are printable
+  ASCII. This keeps marks out of words, emoji and Urdu/Arabic text. Gaps next to URLs are skipped.
+- A whole frame goes into one gap.
+- Frames go in the first gap, the last gap and every `R`-th gap in between (default `R = 40`).
+- If the text has no gap, embedding fails. If it has fewer gaps than `R`, it gets one or two frames.
+- Invariant: removing all zero-width characters from the output gives back the input exactly.
+
 ### Trace outcomes
 
 ## Data flow
