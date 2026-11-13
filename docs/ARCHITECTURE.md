@@ -66,6 +66,19 @@ offline because they do not have `K`, so this is enough for our use.
 
 ### Trace outcomes
 
+Each frame is checked on its own. Then:
+
+| Outcome | When |
+|---|---|
+| `TRACED` | valid frames all point to one recipient |
+| `COLLUSION` | valid frames point to more than one recipient |
+| `TAMPERED` | frames found, none valid |
+| `UNREGISTERED` | valid frame, but the recipient is not in the database |
+| `NOT_FOUND` | no frames at all |
+
+Only a frame with a valid tag can name a recipient. Invalid or cut frames are counted and shown,
+never used to blame anyone.
+
 ## Data flow
 
 ### Embedding a document
