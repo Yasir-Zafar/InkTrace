@@ -1,0 +1,11 @@
+# Normalise line endings to LF in the repo
+* text=auto eol=lf
+
+# Test fixtures contain zero-width characters on purpose; diff them as text
+# but never let any tool rewrite them.
+tests/fixtures/** text eol=lf -whitespace
+
+*.png binary
+*.jpg binary
+*.pdf binary
+*.docx binary
