@@ -68,25 +68,25 @@ def trace(text: str, key: bytes, lookup: Lookup) -> TraceResult:
     return TraceResult(outcome, hits, invalid, broken)
 
 
+
+def _who(h: Hit) -> str:
+    name = h.name or "unknown recipient"
+    return f"{name} (doc {h.doc_id}, recipient {h.recipient_id}, {h.frames} valid frame(s))"
+
+
 def explain(r: TraceResult) -> str:
     """Human readable report for the CLI and web page."""
-
-    def who(h: Hit) -> str:
-        name = h.name or "unknown recipient"
-        return f"{name} (doc {h.doc_id}, recipient {h.recipient_id}, {h.frames} valid)"
-
-    lines = {
-        Outcome.TRACED: f"Leaked by: {who(r.hits[0])}" if r.hits else "",
-        Outcome.COLLUSION: "Several valid recipients, possible collusion:",
-        Outcome.TAMPERED: "Possible tampering: hidden codes found but none are valid. Nobody named.",
-        Outcome.UNREGISTERED: f"Valid code but not in the database: {who(r.hits[0])}"
-        if r.hits
-        else "",
-        Outcome.NOT_FOUND: "No watermark found.",
-    }
-    out = [lines[r.outcome]]
-    if r.outcome is Outcome.COLLUSION:
-        out += [f"  - {who(h)}" for h in r.hits]
+    if r.outcome is Outcome.TRACED:
+        out = [f"Leaked by: {_who(r.hits[0])}"]
+    elif r.outcome is Outcome.COLLUSION:
+        out = ["Several valid recipients, possible collusion:"]
+        out += [f"  - {_who(h)}" for h in r.hits]
+    elif r.outcome is Outcome.UNREGISTERED:
+        out = [f"Valid code, but not in the database: {_who(r.hits[0])}"]
+    elif r.outcome is Outcome.TAMPERED:
+        out = ["Possible tampering: hidden codes found but none are valid. Nobody named."]
+    else:
+        out = ["No watermark found."]
     if r.invalid or r.broken:
         out.append(f"Ignored: {r.invalid} frame(s) with bad tags, {r.broken} damaged frame(s).")
     return "\n".join(out)
