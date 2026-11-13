@@ -50,3 +50,31 @@ def unpack(bits: str) -> Payload:
         recipient_id=(n >> 64) & 0xFFFF,
         tag=(n & (2**64 - 1)).to_bytes(TAG_BYTES, "big"),
     )
+
+
+def frame(p: Payload) -> str:
+    """Payload -> invisible frame string."""
+    return zw.MARK + zw.bits_to_zw(pack(p)) + zw.MARK
+
+
+_RUN_RE = re.compile("[" + zw.ZERO + zw.ONE + zw.MARK + "]+")
+
+
+def parse_frames(text: str) -> tuple[list[Payload], int]:
+    """Find frames in text.
+
+    Returns (payloads, broken). broken counts zero-width runs that look like
+    our marks but are not a whole, well-formed frame (cut, edited, junk).
+    """
+    payloads: list[Payload] = []
+    broken = 0
+    for run in _RUN_RE.findall(text):
+        data = run[1:-1]
+        if len(run) < 2 or run[0] != zw.MARK or run[-1] != zw.MARK or zw.MARK in data:
+            broken += 1
+            continue
+        try:
+            payloads.append(unpack(zw.zw_to_bits(data)))
+        except ValueError:
+            broken += 1
+    return payloads, broken
