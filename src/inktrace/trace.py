@@ -41,3 +41,28 @@ class TraceResult:
     @property
     def valid(self) -> int:
         return sum(h.frames for h in self.hits)
+
+
+def trace(text: str, key: bytes, lookup: Lookup) -> TraceResult:
+    """Trace a leaked text. lookup(doc_id, recipient_id) returns a name or None."""
+    payloads, broken = parse_frames(text)
+    counts: Counter[tuple[int, int]] = Counter()
+    invalid = 0
+    for p in payloads:
+        if crypto.verify_tag(key, p.version, p.doc_id, p.recipient_id, p.tag):
+            counts[(p.doc_id, p.recipient_id)] += 1
+        else:
+            invalid += 1
+
+    if not counts:
+        outcome = Outcome.TAMPERED if payloads or broken else Outcome.NOT_FOUND
+        return TraceResult(outcome, invalid=invalid, broken=broken)
+
+    hits = [Hit(d, r, lookup(d, r), n) for (d, r), n in counts.most_common()]
+    if len(hits) > 1:
+        outcome = Outcome.COLLUSION
+    elif hits[0].name is None:
+        outcome = Outcome.UNREGISTERED
+    else:
+        outcome = Outcome.TRACED
+    return TraceResult(outcome, hits, invalid, broken)
