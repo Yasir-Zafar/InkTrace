@@ -1,40 +1,5 @@
-# InkTrace Security Analysis
+# References
 
-> Draft. Every number in this document must come from a script in `eval/`.
-
-## Threat model
-
-### Assets
-
-### Actors and assumptions
-
-### What InkTrace does not try to do
-
-## Security goals
-
-## Results
-
-### Attack tests
-
-### Forgery and false accusations
-
-### Platform tests
-
-See [results/platforms.md](results/platforms.md).
-
-### Performance
-
-### Partial leaks
-
-## Discussion
-
-## Known limitations
-
-## Possible improvements
-
-## Lessons learned
-
-## References
 
 1. Brassil, J. T., Low, S., Maxemchuk, N. F., & O'Gorman, L. (1995). Electronic marking and identification
    techniques to discourage document copying. *IEEE JSAC*, 13(8), 1495-1504. https://doi.org/10.1109/49.464718
