@@ -6,24 +6,24 @@ U+2060 (word joiner) marks the start and end of a frame.
 
 import re
 
-ZERO = "​"
-ONE = "‌"
-MARK = "⁠"
+ZERO = "\u200b"
+ONE = "\u200c"
+MARK = "\u2060"
 
 # Every invisible character we know of, including ones we never write.
 # Used for stripping and for revealing hidden text.
 NAMES = {
-    "​": "ZWSP",
-    "‌": "ZWNJ",
-    "‍": "ZWJ",
-    "‎": "LRM",
-    "‏": "RLM",
-    "⁠": "WJ",
-    "⁡": "FA",
-    "⁢": "IT",
-    "⁣": "IS",
-    "⁤": "IP",
-    "﻿": "BOM",
+    "\u200b": "ZWSP",
+    "\u200c": "ZWNJ",
+    "\u200d": "ZWJ",
+    "\u200e": "LRM",
+    "\u200f": "RLM",
+    "\u2060": "WJ",
+    "\u2061": "FA",
+    "\u2062": "IT",
+    "\u2063": "IS",
+    "\u2064": "IP",
+    "\ufeff": "BOM",
 }
 
 ZW_RE = re.compile("[" + "".join(NAMES) + "]")

@@ -37,7 +37,7 @@ def test_strip_keeps_normal_text(text):
 
 
 def test_strip_and_reveal():
-    text = "a" + zw.ZERO + "b" + zw.MARK + "c﻿"
+    text = "a" + zw.ZERO + "b" + zw.MARK + "c\ufeff"
     assert zw.strip_zero_width(text) == "abc"
     assert zw.reveal(text) == "a<ZWSP>b<WJ>c<BOM>"
     assert zw.has_zero_width(text)
