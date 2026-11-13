@@ -33,6 +33,17 @@ strip it as a byte order mark.
 
 ### Payload format
 
+116 bits, big-endian:
+
+| Field | Bits | Notes |
+|---|---|---|
+| `version` | 4 | `1` for now |
+| `doc_id` | 32 | document id |
+| `recipient_id` | 16 | recipient id within the document |
+| `tag` | 64 | truncated HMAC, see below |
+
+A frame is `U+2060 + 116 data chars + U+2060`, so 118 invisible characters.
+
 ### Key handling
 
 ### Placement in the text
