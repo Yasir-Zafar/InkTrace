@@ -7,7 +7,7 @@ counted and reported, never used to blame anyone.
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 
 from inktrace import crypto
 from inktrace.payload import parse_frames
@@ -15,7 +15,7 @@ from inktrace.payload import parse_frames
 Lookup = Callable[[int, int], str | None]
 
 
-class Outcome(str, Enum):
+class Outcome(StrEnum):
     TRACED = "traced"
     COLLUSION = "collusion"
     TAMPERED = "tampered"
@@ -66,7 +66,6 @@ def trace(text: str, key: bytes, lookup: Lookup) -> TraceResult:
     else:
         outcome = Outcome.TRACED
     return TraceResult(outcome, hits, invalid, broken)
-
 
 
 def _who(h: Hit) -> str:

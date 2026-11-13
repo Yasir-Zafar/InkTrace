@@ -1,5 +1,3 @@
-from dataclasses import replace
-
 from inktrace import crypto, zw
 from inktrace.payload import Payload, frame
 from inktrace.trace import Outcome, explain, trace
@@ -90,7 +88,7 @@ def test_collusion_merged_copies():
 
 
 def test_valid_plus_forged_reports_both():
-    forged = frame(replace(Payload(1, 7, 2, bytes(8))))
+    forged = frame(Payload(1, 7, 2, bytes(8)))
     r = trace(copy_for(1) + " " + forged, KEY, lookup)
     assert r.outcome is Outcome.TRACED and r.invalid == 1
     assert "Ignored: 1" in explain(r)
