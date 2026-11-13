@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+
+# Nix / direnv
+.direnv/
+result
+result-*
+
+# Secrets and local data: never commit keys or real databases
+.env
+.env.*
+*.key
+*.pem
+*.db
+*.sqlite
+*.sqlite3
+keys/
+
+# Generated demo output
+copies/
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
