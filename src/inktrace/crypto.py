@@ -29,3 +29,36 @@ def make_tag(key: bytes, version: int, doc_id: int, recipient_id: int) -> bytes:
 
 def verify_tag(key: bytes, version: int, doc_id: int, recipient_id: int, tag: bytes) -> bool:
     return hmac.compare_digest(make_tag(key, version, doc_id, recipient_id), tag)
+
+
+def key_to_hex(key: bytes) -> str:
+    return key.hex()
+
+
+def load_key(path: str | None = None) -> bytes:
+    """Load a hex key from a file, or from INKTRACE_KEY if no path is given."""
+    import os
+
+    if path:
+        with open(path) as f:
+            raw = f.read().strip()
+    else:
+        raw = os.environ.get("INKTRACE_KEY", "").strip()
+        if not raw:
+            raise ValueError("no key: pass a key file or set INKTRACE_KEY")
+    try:
+        key = bytes.fromhex(raw)
+    except ValueError:
+        raise ValueError("key must be hex") from None
+    if len(key) != KEY_LEN:
+        raise ValueError(f"key must be {KEY_LEN} bytes")
+    return key
+
+
+def save_key(key: bytes, path: str) -> None:
+    """Write a hex key readable only by the owner."""
+    import os
+
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "w") as f:
+        f.write(key_to_hex(key) + "\n")
