@@ -12,7 +12,7 @@ import random
 import time
 from pathlib import Path
 
-from inktrace import crypto
+from inktrace import crypto, zw
 from inktrace.payload import Payload, frame
 from inktrace.trace import trace
 
@@ -56,8 +56,6 @@ def insider_swap(key):
 
 def bit_flips(key):
     """Every single-bit flip of every recipient's frame."""
-    from inktrace import zw
-
     tries = hits = 0
     for rid in RECIPIENTS:
         f = frame(Payload(1, DOC, rid, crypto.make_tag(key, 1, DOC, rid)))
