@@ -1,0 +1,12 @@
+{
+  "recipients": 50,
+  "random_tag_guesses": 1000000,
+  "random_tag_false_accusations": 0,
+  "insider_swap_tries": 2450,
+  "insider_swap_false_accusations": 0,
+  "bit_flip_tries": 5800,
+  "bit_flip_false_accusations": 0,
+  "theory_success_per_guess": "2^-64",
+  "theory_expected_hits_random": 5.421010862427522e-14,
+  "seconds": 13.8
+}
