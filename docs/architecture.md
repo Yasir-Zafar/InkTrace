@@ -181,3 +181,17 @@ erDiagram
 The key is never stored in the database.
 
 ## Design decisions and alternatives
+
+| Decision | Why | Rejected alternative |
+|---|---|---|
+| Zero-width chars | survive copy/paste in most apps, invisible | homoglyphs (look wrong in some fonts), extra spaces (collapsed by HTML) |
+| HMAC-SHA256 | only the sender needs to verify; stdlib, fast | RSA/Ed25519 signatures: anyone could verify, but codes get much longer |
+| 64-bit truncated tag | keeps a frame at 118 chars; 2^-64 per guess and no offline check | full 256-bit tag: 310 chars per frame |
+| Per-document key | a code copied from one document never verifies for another | one key for everything |
+| Whole frame per gap, repeated | partial copies still trace if one frame survives | spreading one code across many gaps: cut copies lose it |
+| 1 bit per char | simple, avoids ZWJ near emoji | 2 bits per char: half the length, more fragile |
+| Never accuse on a bad tag | blaming the wrong person is worse than missing a leak | best-effort decode of damaged frames |
+
+Known limits (details in [security-analysis.md](security-analysis.md)): anyone who knows about
+zero-width characters can strip them, and retyping or screenshots remove the mark. Two recipients
+who compare copies can see where the codes differ.
