@@ -66,3 +66,26 @@ def trace(text: str, key: bytes, lookup: Lookup) -> TraceResult:
     else:
         outcome = Outcome.TRACED
     return TraceResult(outcome, hits, invalid, broken)
+
+
+def explain(r: TraceResult) -> str:
+    """Human readable report for the CLI and web page."""
+    def who(h: Hit) -> str:
+        name = h.name or "unknown recipient"
+        return f"{name} (doc {h.doc_id}, recipient {h.recipient_id}, {h.frames} valid)"
+
+    lines = {
+        Outcome.TRACED: f"Leaked by: {who(r.hits[0])}" if r.hits else "",
+        Outcome.COLLUSION: "Several valid recipients, possible collusion:",
+        Outcome.TAMPERED: "Possible tampering: hidden codes found but none are valid. Nobody named.",
+        Outcome.UNREGISTERED: f"Valid code but not in the database: {who(r.hits[0])}"
+        if r.hits
+        else "",
+        Outcome.NOT_FOUND: "No watermark found.",
+    }
+    out = [lines[r.outcome]]
+    if r.outcome is Outcome.COLLUSION:
+        out += [f"  - {who(h)}" for h in r.hits]
+    if r.invalid or r.broken:
+        out.append(f"Ignored: {r.invalid} frame(s) with bad tags, {r.broken} damaged frame(s).")
+    return "\n".join(out)
