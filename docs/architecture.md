@@ -126,6 +126,24 @@ sequenceDiagram
 
 ### Tracing a leaked copy
 
+```mermaid
+sequenceDiagram
+  participant S as Sender
+  participant C as cli / web
+  participant T as trace
+  participant DB as store
+  S->>C: leaked text
+  C->>T: trace(text, K, lookup)
+  T->>T: parse_frames: whole frames + count of damaged ones
+  loop each frame
+    T->>T: verify_tag (compare_digest)
+  end
+  T->>DB: lookup(doc_id, recipient_id) for valid frames only
+  T-->>C: outcome + hits + ignored counts
+  C->>DB: log trace
+  C-->>S: explain(result)
+```
+
 ## Database schema
 
 ## Design decisions and alternatives
